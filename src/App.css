@@ -1,0 +1,24 @@
+.container {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-template-rows: 80px auto;
+  grid-template-areas:
+    'header header '
+    'canvas control';
+  justify-items: center;
+  align-items: center;
+}
+
+.header {
+  grid-area: header;
+}
+
+.canvas {
+  grid-area: canvas;
+}
+
+.control {
+  grid-area: control;
+  justify-self: start;
+  align-self: start;
+}
