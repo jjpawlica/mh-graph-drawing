@@ -32,7 +32,6 @@ const sketch = p => {
     for (const index in data) {
       nodes[index] = {
         ...data[index],
-        index,
         x: p.random(0, 600),
         y: p.random(0, 600)
       };
