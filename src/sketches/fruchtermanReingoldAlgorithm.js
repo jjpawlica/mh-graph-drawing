@@ -16,9 +16,9 @@ const sketch = p => {
   const endTemperature = 0.0001;
 
   let temperature = startTemperature;
+  const m = 500; // Maximum iterations
   const b = p.pow(endTemperature / startTemperature, 1 / m); // Cooling factor
 
-  const m = 500; // Maximum iterations
   let counter = 0;
 
   p.redrawHandler = sketchValues => {
@@ -38,7 +38,7 @@ const sketch = p => {
     }
   };
 
-  p.arrangeGraph = temperature => {
+  p.arrangeGraph = temp => {
     const numberOfVertices = nodes.length;
     const k = constant * p.sqrt(area / numberOfVertices);
     for (const index in graph.nodes) {
@@ -62,7 +62,7 @@ const sketch = p => {
             totalForce.y += ((distance * distance) / k) * y;
             totalForce.x += ((k * k) / distance) * -x;
             totalForce.y += ((k * k) / distance) * -y;
-            // Apply Fruchterman-Reingold formula for repulsive force for inverse unit vector
+            // Apply Fruchterman Reingold formula for repulsive force for inverse unit vector
           } else {
             totalForce.x += ((k * k) / distance) * -x;
             totalForce.y += ((k * k) / distance) * -y;
