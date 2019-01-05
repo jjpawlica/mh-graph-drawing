@@ -1,7 +1,8 @@
 import React, { Component } from 'react';
 import P5Wrapper from './components/P5Wrapper';
-import random from './sketches/random';
-import eades from './sketches/eadesAlgorithm';
+// import sketch from './sketches/random';
+// import sketch from './sketches/eadesAlgorithm';
+import sketch from './sketches/fruchtermanReingoldAlgorithm';
 
 class App extends Component {
   constructor() {
@@ -28,7 +29,7 @@ class App extends Component {
         <h2>{`Nodes: ${nodes}`}</h2>
         <div>
           <P5Wrapper
-            sketch={eades}
+            sketch={sketch}
             sketchValues={{}}
             updateStateHandler={this.updateStateHandler}
           />
