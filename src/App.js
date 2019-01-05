@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import P5Wrapper from './components/P5Wrapper';
 import random from './sketches/random';
+import eades from './sketches/eadesAlgorithm';
 
 class App extends Component {
   constructor() {
@@ -27,7 +28,7 @@ class App extends Component {
         <h2>{`Nodes: ${nodes}`}</h2>
         <div>
           <P5Wrapper
-            sketch={random}
+            sketch={eades}
             sketchValues={{}}
             updateStateHandler={this.updateStateHandler}
           />
