@@ -7,12 +7,11 @@ const sketch = p => {
   const nodes = [];
   let graph;
 
-  const edgeLength = 100;
-  const c1 = 2; // Attraction force constant
-  const c2 = 1 * edgeLength; // Optimal edge length
-  const c3 = 1; // Repelent force constant
-  const c4 = 0.01 * edgeLength; // Rate of change
-  const m = 100 * edgeLength; // Number of iterations
+  const c1 = 1; // Attraction force constant - original value = 2
+  const c2 = 100; // Optimal edge length - original value = 1
+  const c3 = 1; // Repelent force constant - original value = 1
+  const c4 = 10; // Rate of change - original value =0.01
+  const m = 1000; // Number of iterations - original value = 500
 
   let counter = 0;
 
@@ -26,56 +25,47 @@ const sketch = p => {
   };
 
   p.drawEdges = () => {
-    const drawnEdges = [];
     for (const edge of graph.edges) {
       // Find start and end node of given edge so we can their X and Y position
       const start = nodes.find(node => node.id === edge.source);
       const end = nodes.find(node => node.id === edge.target);
-      // Check if given edge is already drawn
-      const isDrawn = drawnEdges.some(
-        drawnEdge =>
-          (drawnEdge[0] === start.id && drawnEdge[1] === end.id) ||
-          (drawnEdge[0] === end.id && drawnEdge[1] === start.id)
-      );
-      if (!isDrawn) {
-        drawnEdges.push([start.id, end.id]);
-        drawnEdges.push([end.id, start.id]);
-        p.line(start.x, start.y, end.x, end.y);
-      }
+      p.line(start.x, start.y, end.x, end.y);
     }
   };
 
-  p.arrangeGraph = () => {
-    for (const index in graph.nodes) {
+  p.arrangeGraph = g => {
+    for (const node of g.nodes) {
       const totalForce = { x: 0, y: 0 };
-      for (const targetIndex in graph.nodes) {
-        // Compute distance between given node and target note
-        const distance = p.dist(
-          graph.nodes[index].x,
-          graph.nodes[index].y,
-          graph.nodes[targetIndex].x,
-          graph.nodes[targetIndex].y
+      for (const target of g.nodes) {
+        const connected = g.edges.some(
+          edge =>
+            (edge.source === node.id && edge.target === target.id) ||
+            (edge.source === target.id && edge.target === node.id)
         );
+        // Compute distance between given node and target note
+        const distance = p.dist(node.x, node.y, target.x, target.y);
         // Distance must be greater then 0 else calculations have no result
         if (distance > 0) {
           // Calculated unit vector coordinates for given node and target node
-          const x = (graph.nodes[targetIndex].x - graph.nodes[index].x) / distance;
-          const y = (graph.nodes[targetIndex].y - graph.nodes[index].y) / distance;
+          const x = (target.x - node.x) / distance;
+          const y = (target.y - node.y) / distance;
 
-          // Apply  Eades' formula for attraction force to unit vector
-          if (graph.adjacencyMatrix[index][targetIndex]) {
+          // Apply  Eades' formula for attraction force to unit vector if edges are conected
+          if (connected) {
             totalForce.x += c1 * p.log(distance / c2) * x;
             totalForce.y += c1 * p.log(distance / c2) * y;
-            // Apply Eades' formula for repulsive force for inverse unit vector
-          } else {
+          }
+
+          // Apply Eades' formula for repulsive force for inverse unit vector
+          else {
             totalForce.x += (c3 / p.sqrt(distance)) * -x;
             totalForce.y += (c3 / p.sqrt(distance)) * -y;
           }
         }
       }
       // Update position of given node by total force times constant
-      graph.nodes[index].x += c4 * totalForce.x;
-      graph.nodes[index].y += c4 * totalForce.y;
+      node.x += c4 * totalForce.x;
+      node.y += c4 * totalForce.y;
     }
   };
 
@@ -107,7 +97,7 @@ const sketch = p => {
       p.text(node.id, node.x, node.y - 20);
     }
 
-    p.arrangeGraph();
+    p.arrangeGraph(graph);
     counter += 1;
 
     p.stroke(255);
