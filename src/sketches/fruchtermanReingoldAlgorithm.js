@@ -1,14 +1,14 @@
 /* eslint-disable guard-for-in */
 /* eslint-disable no-param-reassign */
-import data from './graphs/data';
+import data from './graphs/data2';
 import Graph from './graphs/graph';
 
 const sketch = p => {
   const nodes = [];
   let graph;
 
-  const length = 100;
-  const height = 100;
+  const length = 200;
+  const height = 200;
   const area = length * height;
 
   const constant = 1; // Force constant
@@ -31,45 +31,36 @@ const sketch = p => {
   };
 
   p.drawEdges = () => {
-    const drawnEdges = [];
     for (const edge of graph.edges) {
       // Find start and end node of given edge so we can their X and Y position
       const start = nodes.find(node => node.id === edge.source);
       const end = nodes.find(node => node.id === edge.target);
-      // Check if given edge is already drawn
-      const isDrawn = drawnEdges.some(
-        drawnEdge =>
-          (drawnEdge[0] === start.id && drawnEdge[1] === end.id) ||
-          (drawnEdge[0] === end.id && drawnEdge[1] === start.id)
-      );
-      if (!isDrawn) {
-        drawnEdges.push([start.id, end.id]);
-        drawnEdges.push([end.id, start.id]);
-        p.line(start.x, start.y, end.x, end.y);
-      }
+      p.line(start.x, start.y, end.x, end.y);
     }
   };
 
-  p.arrangeGraph = temp => {
-    const numberOfVertices = nodes.length;
+  p.arrangeGraph = (g, temp) => {
+    const numberOfVertices = g.nodes.length;
     const k = constant * p.sqrt(area / numberOfVertices);
-    for (const index in graph.nodes) {
+    for (const node of g.nodes) {
       const totalForce = { x: 0, y: 0 };
-      for (const targetIndex in graph.nodes) {
-        // Compute distance between given node and target note
-        const distance = p.dist(
-          graph.nodes[index].x,
-          graph.nodes[index].y,
-          graph.nodes[targetIndex].x,
-          graph.nodes[targetIndex].y
+      for (const target of g.nodes) {
+        const connected = g.edges.some(
+          edge =>
+            (edge.source === node.id && edge.target === target.id) ||
+            (edge.source === target.id && edge.target === node.id)
         );
+        // Compute distance between given node and target note
+        const distance = p.dist(node.x, node.y, target.x, target.y);
+        // Distance must be greater then 0 else calculations have no result
         // Distance must be greater then 0 else calculations have no result
         if (distance > 0) {
           // Calculated unit vector coordinates for given node and target node
-          const x = (graph.nodes[targetIndex].x - graph.nodes[index].x) / distance;
-          const y = (graph.nodes[targetIndex].y - graph.nodes[index].y) / distance;
-          // Apply  Fruchterman Reingold formula for attraction and repulsive force to unit vector (adjacent nodes)
-          if (graph.adjacencyMatrix[index][targetIndex]) {
+          const x = (target.x - node.x) / distance;
+          const y = (target.y - node.y) / distance;
+
+          // Apply Fruchterman Reingold formula for repulsive force for inverse unit vector
+          if (connected) {
             totalForce.x += ((distance * distance) / k) * x;
             totalForce.y += ((distance * distance) / k) * y;
             totalForce.x += ((k * k) / distance) * -x;
@@ -82,11 +73,11 @@ const sketch = p => {
         }
       }
       // Update position of given node by total force times constant
-      graph.nodes[index].x += temperature * totalForce.x;
-      graph.nodes[index].y += temperature * totalForce.y;
+      node.x += temperature * totalForce.x;
+      node.y += temperature * totalForce.y;
       // Clamp graph position to canvas area
-      graph.nodes[index].x = p.min(400, p.max(0, graph.nodes[index].x));
-      graph.nodes[index].y = p.min(400, p.max(0, graph.nodes[index].y));
+      node.x = p.min(400, p.max(0, node.x));
+      node.y = p.min(400, p.max(0, node.y));
     }
   };
 
@@ -118,7 +109,7 @@ const sketch = p => {
       p.text(node.id, node.x, node.y - 20);
     }
 
-    p.arrangeGraph(temperature);
+    p.arrangeGraph(graph, temperature);
 
     // Update temperature by constant and update counter
     temperature *= b;
