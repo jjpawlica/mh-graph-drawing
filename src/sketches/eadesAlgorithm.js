@@ -50,7 +50,7 @@ const sketch = p => {
           const x = (target.x - node.x) / distance;
           const y = (target.y - node.y) / distance;
 
-          // Apply  Eades' formula for attraction force to unit vector if edges are conected
+          // Apply  Eades' formula for attraction force to unit vector if edges are connected
           if (connected) {
             totalForce.x += c1 * p.log(distance / c2) * x;
             totalForce.y += c1 * p.log(distance / c2) * y;
