@@ -29,8 +29,8 @@ const sketch = p => {
     let a = 0;
     let b = 0;
     // Node distribution factor
-    for (const node of graph.nodes) {
-      for (const targetNode of graph.nodes) {
+    for (const node of g.nodes) {
+      for (const targetNode of g.nodes) {
         // Compute distance between given node and target note
         const distance = p.dist(node.x, node.y, targetNode.x, targetNode.y);
         if (distance > 0) {
@@ -39,7 +39,7 @@ const sketch = p => {
       }
     }
     // Borderlines  factor
-    for (const node of graph.nodes) {
+    for (const node of g.nodes) {
       const right = node.x;
       const left = width - node.x;
       const top = node.y;
@@ -57,22 +57,11 @@ const sketch = p => {
   };
 
   p.drawEdges = () => {
-    const drawnEdges = [];
     for (const edge of graph.edges) {
       // Find start and end node of given edge so we can their X and Y position
       const start = nodes.find(node => node.id === edge.source);
       const end = nodes.find(node => node.id === edge.target);
-      // Check if given edge is already drawn
-      const isDrawn = drawnEdges.some(
-        drawnEdge =>
-          (drawnEdge[0] === start.id && drawnEdge[1] === end.id) ||
-          (drawnEdge[0] === end.id && drawnEdge[1] === start.id)
-      );
-      if (!isDrawn) {
-        drawnEdges.push([start.id, end.id]);
-        drawnEdges.push([end.id, start.id]);
-        p.line(start.x, start.y, end.x, end.y);
-      }
+      p.line(start.x, start.y, end.x, end.y);
     }
   };
 
