@@ -2,12 +2,12 @@ const data = [
   {
     id: 'a',
     value: '10',
-    neighbors: ['c']
+    neighbors: ['c', 'g']
   },
   {
     id: 'b',
     value: '11',
-    neighbors: ['c', 'e']
+    neighbors: ['c', 'e', 'f']
   },
   {
     id: 'c',
@@ -22,7 +22,7 @@ const data = [
   {
     id: 'e',
     value: '14',
-    neighbors: ['c', 'b']
+    neighbors: ['b', 'c']
   },
   {
     id: 'f',
