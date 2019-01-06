@@ -17,10 +17,22 @@ const sketch = p => {
   };
 
   p.drawEdges = () => {
+    const drawnEdges = [];
     for (const edge of graph.edges) {
+      // Find start and end node of given edge so we can their X and Y position
       const start = nodes.find(node => node.id === edge.source);
       const end = nodes.find(node => node.id === edge.target);
-      p.line(start.x, start.y, end.x, end.y);
+      // Check if given edge is already drawn
+      const isDrawn = drawnEdges.some(
+        drawnEdge =>
+          (drawnEdge[0] === start.id && drawnEdge[1] === end.id) ||
+          (drawnEdge[0] === end.id && drawnEdge[1] === start.id)
+      );
+      if (!isDrawn) {
+        drawnEdges.push([start.id, end.id]);
+        drawnEdges.push([end.id, start.id]);
+        p.line(start.x, start.y, end.x, end.y);
+      }
     }
   };
 
@@ -47,22 +59,13 @@ const sketch = p => {
     p.noStroke();
     for (const node of nodes) {
       p.ellipse(node.x, node.y, 16, 16);
+      p.text(node.id, node.x, node.y - 20);
     }
     p.stroke(255);
     p.drawEdges();
 
-    for (const node of nodes) {
-      if (node.x <= 600 && node.x >= 0 && node.y <= 600 && node.y >= 0) {
-        node.x += p.random(-5, 5);
-        node.y += p.random(-5, 5);
-      }
-      if (node.x <= 0) node.x += p.random(0, 5);
-      if (node.x >= 600) node.x += p.random(-5, 0);
-      if (node.y <= 0) node.y += p.random(0, 5);
-      if (node.y >= 600) node.y += p.random(-5, 0);
-    }
-
     p.updateStateHandler({ nodes: nodes.length });
+    p.noLoop();
   };
 };
 
