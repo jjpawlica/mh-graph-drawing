@@ -17,22 +17,11 @@ const sketch = p => {
   };
 
   p.drawEdges = () => {
-    const drawnEdges = [];
     for (const edge of graph.edges) {
       // Find start and end node of given edge so we can their X and Y position
       const start = nodes.find(node => node.id === edge.source);
       const end = nodes.find(node => node.id === edge.target);
-      // Check if given edge is already drawn
-      const isDrawn = drawnEdges.some(
-        drawnEdge =>
-          (drawnEdge[0] === start.id && drawnEdge[1] === end.id) ||
-          (drawnEdge[0] === end.id && drawnEdge[1] === start.id)
-      );
-      if (!isDrawn) {
-        drawnEdges.push([start.id, end.id]);
-        drawnEdges.push([end.id, start.id]);
-        p.line(start.x, start.y, end.x, end.y);
-      }
+      p.line(start.x, start.y, end.x, end.y);
     }
   };
 
