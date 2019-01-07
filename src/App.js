@@ -4,7 +4,8 @@ import P5Wrapper from './components/P5Wrapper';
 // import sketch from './sketches/springEmbedder';
 // import sketch from './sketches/forceDirected';
 // import sketch from './sketches/simulatedAnnealing';
-import sketch from './sketches/tabuSearch';
+//import sketch from './sketches/tabuSearch';
+import sketch from './sketches/geneticAlgorithm';
 
 class App extends Component {
   constructor() {
