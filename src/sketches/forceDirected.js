@@ -1,5 +1,10 @@
 /* eslint-disable guard-for-in */
 /* eslint-disable no-param-reassign */
+
+// Title: Force Directed
+// Author: Jakub Pawlica
+// Based on: Fruchterman, T. M. J. & Reingold, E. M. (1991), 'Graph Drawing by Force-directed Placement', Software - Practice and Experience 21 (11), 1129-1164.
+
 import data from './graphs/data2';
 import Graph from './graphs/graph';
 
@@ -7,17 +12,21 @@ const sketch = p => {
   const nodes = [];
   let graph;
 
-  const length = 200;
-  const height = 200;
-  const area = length * height;
+  const width = 600;
+  const height = 600;
+  const area = width * height;
 
-  const constant = 1; // Force constant
+  // Original values do not produce pleasing results in this case
+  const c = 0.5; // Force constant C - good results with value = 0.5, 1
+
+  // Start and end temperature for cooling process
   const startTemperature = 0.1;
   const endTemperature = 0.0001;
 
   let temperature = startTemperature;
+
   const m = 500; // Maximum iterations
-  const b = p.pow(endTemperature / startTemperature, 1 / m); // Cooling factor
+  const b = p.pow(endTemperature / startTemperature, 1 / m); // Cooling factor - original value not provided
 
   let counter = 0;
 
@@ -40,11 +49,12 @@ const sketch = p => {
   };
 
   p.arrangeGraph = (g, temp) => {
-    const numberOfVertices = g.nodes.length;
-    const k = constant * p.sqrt(area / numberOfVertices);
+    const n = g.nodes.length; // Number of vertices
+    const k = c * p.sqrt(area / n); // Constant K needed for further calculations
     for (const node of g.nodes) {
       const totalForce = { x: 0, y: 0 };
       for (const target of g.nodes) {
+        // Check if two nodes are adjacent
         const connected = g.edges.some(
           edge =>
             (edge.source === node.id && edge.target === target.id) ||
@@ -53,12 +63,10 @@ const sketch = p => {
         // Compute distance between given node and target note
         const distance = p.dist(node.x, node.y, target.x, target.y);
         // Distance must be greater then 0 else calculations have no result
-        // Distance must be greater then 0 else calculations have no result
         if (distance > 0) {
           // Calculated unit vector coordinates for given node and target node
           const x = (target.x - node.x) / distance;
           const y = (target.y - node.y) / distance;
-
           // Apply Fruchterman Reingold formula for repulsive force for inverse unit vector
           if (connected) {
             totalForce.x += ((distance * distance) / k) * x;
@@ -76,8 +84,8 @@ const sketch = p => {
       node.x += temperature * totalForce.x;
       node.y += temperature * totalForce.y;
       // Clamp graph position to canvas area
-      node.x = p.min(400, p.max(0, node.x));
-      node.y = p.min(400, p.max(0, node.y));
+      node.x = p.max(0, p.min(width, node.x));
+      node.y = p.max(0, p.min(height, node.y));
     }
   };
 
@@ -95,12 +103,14 @@ const sketch = p => {
       };
     }
 
+    // Generate new graph, it's edges and corresponding adjacency matrix
     graph = new Graph(nodes);
     graph.generateEdges();
     graph.createAdjacencyMatrix();
   };
 
   p.draw = () => {
+    // Draw graph's nodes
     p.background(51);
     p.noStroke();
     p.fill(255);
@@ -109,15 +119,21 @@ const sketch = p => {
       p.text(node.id, node.x, node.y - 20);
     }
 
+    // Draw graph's edges
+    p.stroke(255);
+    p.drawEdges();
+
+    // On each draw loop update graph
     p.arrangeGraph(graph, temperature);
 
-    // Update temperature by constant and update counter
+    // Updated iteration counter and temperature
     temperature *= b;
     counter += 1;
 
-    p.stroke(255);
-    p.drawEdges();
+    // Updated state in react app
     p.updateStateHandler({ nodes: nodes.length });
+
+    // Stop loop when maximum iterations reached
     if (counter === m) {
       p.noLoop();
     }
