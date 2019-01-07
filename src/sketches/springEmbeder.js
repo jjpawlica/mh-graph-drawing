@@ -1,12 +1,21 @@
 /* eslint-disable guard-for-in */
 /* eslint-disable no-param-reassign */
-import data from './graphs/data2';
+
+// Title: Spring Embeder
+// Author: Jakub Pawlica
+// Based on: Eades, P. (1984), 'A heuristic for graph drawing', Congressus Numerantium 42 , 149-160.
+
+import data from './graphs/data';
 import Graph from './graphs/graph';
 
 const sketch = p => {
   const nodes = [];
   let graph;
 
+  const width = 600;
+  const height = 600;
+
+  // Original values do not produce pleasing results in this case
   const c1 = 1; // Attraction force constant - original value = 2
   const c2 = 100; // Optimal edge length - original value = 1
   const c3 = 1; // Repelent force constant - original value = 1
@@ -63,14 +72,14 @@ const sketch = p => {
           }
         }
       }
-      // Update position of given node by total force times constant
+      // Move given node by total force working on it multiplied by constant C4
       node.x += c4 * totalForce.x;
       node.y += c4 * totalForce.y;
     }
   };
 
   p.setup = () => {
-    p.createCanvas(600, 600);
+    p.createCanvas(width, height);
     p.background(51);
     p.frameRate(60);
 
@@ -78,17 +87,19 @@ const sketch = p => {
     for (const index in data) {
       nodes[index] = {
         ...data[index],
-        x: p.random(200, 400),
-        y: p.random(200, 400)
+        x: p.random(width / 3, (2 * width) / 3),
+        y: p.random(height / 3, (2 * height) / 3)
       };
     }
 
+    // Generate new graph, it's edges and corresponding adjacency matrix
     graph = new Graph(nodes);
     graph.generateEdges();
     graph.createAdjacencyMatrix();
   };
 
   p.draw = () => {
+    // Draw graph's nodes
     p.background(51);
     p.noStroke();
     p.fill(255);
@@ -97,12 +108,20 @@ const sketch = p => {
       p.text(node.id, node.x, node.y - 20);
     }
 
-    p.arrangeGraph(graph);
-    counter += 1;
-
+    // Draw graph's edges
     p.stroke(255);
     p.drawEdges();
+
+    // On each draw loop update graph
+    p.arrangeGraph(graph);
+
+    // Updated iteration counter
+    counter += 1;
+
+    // Updated state in react app
     p.updateStateHandler({ nodes: nodes.length });
+
+    // Stop loop when maximum iterations reached
     if (counter === m) {
       p.noLoop();
     }
