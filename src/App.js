@@ -1,9 +1,9 @@
 import React, { Component } from 'react';
 import P5Wrapper from './components/P5Wrapper';
 // import sketch from './sketches/random';
-// import sketch from './sketches/springEmbeder';
-import sketch from './sketches/forceDirected';
-// import sketch from './sketches/davidsonHarelAlgorithm';
+// import sketch from './sketches/springEmbedder';
+// import sketch from './sketches/forceDirected';
+// import sketch from './sketches/simulatedAnnealing';
 
 class App extends Component {
   constructor() {

@@ -1,7 +1,7 @@
 /* eslint-disable guard-for-in */
 /* eslint-disable no-param-reassign */
 
-// Title: Spring Embeder
+// Title: Spring Embedder
 // Author: Jakub Pawlica
 // Based on: Eades, P. (1984), 'A heuristic for graph drawing', Congressus Numerantium 42 , 149-160.
 
