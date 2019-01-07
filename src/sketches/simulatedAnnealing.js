@@ -1,6 +1,12 @@
 /* eslint-disable prefer-destructuring */
 /* eslint-disable guard-for-in */
 /* eslint-disable no-param-reassign */
+
+// Title: Simulated Annealing
+// Author: Jakub Pawlica
+// Based on: Davidson, R. & Harel, D. (1996), 'Drawing Graphs Nicely Using Simulated Annealing.', ACM Trans. Graph. 15 (4), 301-331.
+// TODO: Review calculations
+
 import data from './graphs/data';
 import Graph from './graphs/graph';
 
