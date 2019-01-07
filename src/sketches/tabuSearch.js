@@ -5,25 +5,27 @@
 // Title: Tabu Search
 // Author: Jakub Pawlica
 // Based on: Dib, F. K. & Rodgers, P. (2014), A Tabu Search Based Approach for Graph Layout., in Erland Jungert, ed., 'DMS' , Knowledge Systems Institute Graduate School, , pp. 283-291.
-// Based on: Stott, J.M., & Rodgers, P. (2006). Automatic Metro Map Design Techniques.
 
-import data from './graphs/data';
+import data from './graphs/data3';
 import Graph from './graphs/graph';
 
 const sketch = p => {
   const nodes = [];
-  const tabu = [];
+
+  let tabu = [];
+
   let graph;
 
   const width = 600;
   const height = 600;
 
-  const w1 = 10;
-  const w2 = 0.00001;
-  const w3 = 0.1;
-  const w4 = 0.001;
+  // Original values do not produce pleasing results in this case
+  const w1 = 1; // Node distribution weight
+  const w2 = 0.0000001; // Edge length weight
+  const w3 = 10; // Edge crossing weigh
+  const w4 = 0; // Angular resolution weight
 
-  const m = 5000; // Iterations
+  const m = 1000; // Iterations
 
   const maxSide = 100;
   const minSide = 2;
@@ -31,6 +33,9 @@ const sketch = p => {
   let side = maxSide;
 
   const sideDelta = p.pow(minSide / maxSide, 1 / m); // Radius delta
+
+  const tabuCutoff = 0.9;
+  const tabuDuration = 7;
 
   let counter = 0;
 
@@ -43,11 +48,13 @@ const sketch = p => {
     p.setup();
   };
 
+  p.normalize = x => 2 * (1 / (1 + p.exp(-x))) - 1;
+
   p.calculateFitness = g => {
     let totalFitness = 0;
     let crossings = 0;
 
-    // Criteria values contributions to total fitness function
+    // Criteria values contributions to total energy function
     let m1 = 0; // Node distribution factor
     let m2 = 0; // Edge length factor
     let m3 = 0; // Edge crossing factor
@@ -59,7 +66,7 @@ const sketch = p => {
         // Compute distance between given node and target note
         const distance = p.dist(node.x, node.y, targetNode.x, targetNode.y);
         if (distance > 0) {
-          m1 += 1 / (distance * distance);
+          m1 += w1 / (distance * distance);
         }
       }
     }
@@ -69,7 +76,7 @@ const sketch = p => {
       const start = g.nodes.find(node => node.id === edge.source);
       const end = g.nodes.find(node => node.id === edge.target);
       const distance = p.dist(start.x, start.y, end.x, end.y);
-      m2 += distance * distance;
+      m2 += w2 * distance * distance;
     }
 
     // Calculate edge crossing factor
@@ -87,7 +94,7 @@ const sketch = p => {
             ((q2.y - q1.y) * (p1.x - q1.x) - (q2.x - q1.x) * (p1.y - q1.y)) *
             ((q2.y - q1.y) * (p2.x - q1.x) - (q2.x - q1.x) * (p2.y - q1.y));
           if (u <= 0 && t <= 0) crossings += 1;
-          m3 = crossings;
+          m3 = w3 * crossings;
         }
       }
     }
@@ -103,8 +110,8 @@ const sketch = p => {
             const secondTarget = g.nodes.find(n => n.id === node.neighbors[j + 1]);
 
             // Edges length
-            const firstEdgeLenght = p.dist(node.x, node.y, firstTarget.x, firstTarget.y);
-            const secondEdgeLenght = p.dist(node.x, node.y, secondTarget.x, secondTarget.y);
+            const firstEdgeLength = p.dist(node.x, node.y, firstTarget.x, firstTarget.y);
+            const secondEdgeLength = p.dist(node.x, node.y, secondTarget.x, secondTarget.y);
 
             // Vectors representing edges
             const firstVector = { x: firstTarget.x - node.x, y: firstTarget.y - node.y };
@@ -113,7 +120,7 @@ const sketch = p => {
             // Dot product between vectors
             const dotProduct = firstVector.x * secondVector.x + firstVector.y * secondVector.y;
 
-            const angle = 100 * (p.acos(dotProduct / (firstEdgeLenght * secondEdgeLenght)) / p.PI);
+            const angle = 100 * (p.acos(dotProduct / (firstEdgeLength * secondEdgeLength)) / p.PI);
             const difference = p.abs(360 / node.neighbors.length - angle);
 
             // For pair and it's reverse increase angular resolution factor
@@ -122,8 +129,17 @@ const sketch = p => {
         }
       }
     }
+    // Sum total energy
+    // totalFitness = p.normalize(m1) + p.normalize(m2) + p.normalize(m3) + p.normalize(w4 * m4);
+    totalFitness = m1 + m2 + m3 + w4 * m4;
 
-    totalFitness = w1 * m1 + w2 * m2 + w3 * m3 + w4 * m4;
+    // console.log(
+    //   p.normalize(m1),
+    //   p.normalize(m2),
+    //   p.normalize(m3),
+    //   p.normalize(w4 * m4),
+    //   totalFitness
+    // );
     return totalFitness;
   };
 
@@ -136,23 +152,21 @@ const sketch = p => {
     }
   };
 
-  p.generateNeigborhood = (g, s) => {
-    const neighborhood = [];
-    for (const node of g.nodes) {
-      const neighbors = [
-        [node.x - s / 2, node.y - s / 2],
-        [node.x, node.y - s / 2],
-        [node.x + s / 2, node.y - s / 2],
-        [node.x + s / 2, node.y],
-        [node.x + s / 2, node.y + s / 2],
-        [node.x, node.y + s / 2],
-        [node.x - s / 2, node.y + s / 2],
-        [node.x - s / 2, node.y]
-      ];
-      neighborhood.push(neighbors);
-    }
-    return neighborhood;
+  p.generateAlternativeSolution = (g, n, nodeIndex, neighborIndex) => {
+    // Create copy of the current nodes (deep clone)
+    const nodesClone = JSON.parse(JSON.stringify(g.nodes));
+    nodesClone[nodeIndex].x = n[nodeIndex][neighborIndex][0];
+    nodesClone[nodeIndex].y = n[nodeIndex][neighborIndex][1];
+
+    // Create new graph
+    const alternativeGraph = new Graph(nodesClone);
+    alternativeGraph.generateEdges();
+    alternativeGraph.createAdjacencyMatrix();
+
+    return alternativeGraph;
   };
+
+  p.isTabu = (pointX, pointY) => tabu.some(point => point[0] === pointX && point[1] === pointY);
 
   p.setup = () => {
     p.createCanvas(width, height);
@@ -163,8 +177,8 @@ const sketch = p => {
     for (const index in data) {
       nodes[index] = {
         ...data[index],
-        x: p.random(200, 400),
-        y: p.random(200, 400)
+        x: p.random(0, 600),
+        y: p.random(0, 600)
       };
     }
 
@@ -188,12 +202,37 @@ const sketch = p => {
     p.stroke(255);
     p.drawEdges(graph);
 
-    // Updated iteration counter
-    const a = p.calculateFitness(graph);
-
     // Generate neighborhood
-    const neighborhood = p.generateNeigborhood(graph, side);
-    counter += 1;
+    const neighborhood = [];
+
+    for (const node of graph.nodes) {
+      const neighbors = [];
+      if (node.x - side / 2 > 0 && node.y - side / 2 > 0) {
+        neighbors.push([node.x - side / 2, node.y - side / 2]);
+      }
+      if (node.x - side / 2 > 0) {
+        neighbors.push([node.x - side / 2, node.y]);
+      }
+      if (node.x - side / 2 > 0 && node.y + side / 2 < height) {
+        neighbors.push([node.x - side / 2, node.y + side / 2]);
+      }
+      if (node.x + side / 2 < width && node.y - side / 2 > 0) {
+        neighbors.push([node.x + side / 2, node.y - side / 2]);
+      }
+      if (node.x + side / 2 < width) {
+        neighbors.push([node.x + side / 2, node.y]);
+      }
+      if (node.x + side / 2 < width && node.y + side / 2 < height) {
+        neighbors.push([node.x + side / 2, node.y + side / 2]);
+      }
+      if (node.y - side / 2 > 0) {
+        neighbors.push([node.x, node.y - side / 2]);
+      }
+      if (node.y + side / 2 < height) {
+        neighbors.push([node.x, node.y + side / 2]);
+      }
+      neighborhood.push(neighbors);
+    }
 
     for (const set of neighborhood) {
       for (const point of set) {
@@ -201,13 +240,82 @@ const sketch = p => {
         p.ellipse(point[0], point[1], 4, 4);
       }
     }
-    // Updated state in react app
-    p.updateStateHandler({ nodes: a });
 
+    // Decrease tabu duration for each element in tabu list
+    if (tabu.length > 0) {
+      const tabuClone = JSON.parse(JSON.stringify(tabu));
+      for (let i = 0; i < tabuClone.length; i += 1) {
+        tabuClone[i][2] -= 1;
+      }
+      tabu = tabuClone;
+    }
+
+    // // Remove points from tabu if their duration = 0
+    tabu = tabu.filter(point => point[2] > 0);
+
+    const currentFitness = p.calculateFitness(graph);
+    let bestFitness = currentFitness;
+
+    let chosenNode = 0;
+    let chosenPoint = 0;
+
+    // Check fitness function in every possible alterative solution
+    for (let i = 0; i < neighborhood.length; i += 1) {
+      for (let j = 0; j < neighborhood[i].length; j += 1) {
+        // Check if neighbor is not in tabu list
+        const isTabu = p.isTabu(neighborhood[i][j][0], neighborhood[i][j][1]);
+        if (!isTabu) {
+          // Calculated fitness function for current best graph and alternative solution
+          const alternative = p.generateAlternativeSolution(graph, neighborhood, i, j);
+          const alternativeFitness = p.calculateFitness(alternative);
+          if (alternativeFitness < bestFitness) {
+            bestFitness = alternativeFitness;
+            chosenNode = i;
+            chosenPoint = j;
+          }
+          // Add bad solutions to tabu list
+          if (currentFitness / alternativeFitness > tabuCutoff) {
+            tabu.push([neighborhood[i][j][0], neighborhood[i][j][1], tabuDuration]);
+          }
+        }
+      }
+    }
+
+    const bestAlternative = p.generateAlternativeSolution(
+      graph,
+      neighborhood,
+      chosenNode,
+      chosenPoint
+    );
+
+    tabu.push([
+      neighborhood[chosenNode][chosenPoint][0],
+      neighborhood[chosenNode][chosenPoint][1],
+      tabuDuration
+    ]);
+
+    // for (const node of bestAlternative.nodes) {
+    //   p.fill(0, 255, 0, 100);
+    //   p.noStroke();
+    //   p.ellipse(node.x, node.y, 16, 16);
+    //   p.text(node.id, node.x, node.y - 20);
+    // }
+
+    // // Draw graph's edges
+    // p.stroke(0, 255, 0);
+    // p.drawEdges(bestAlternative);
+
+    graph = bestAlternative;
+
+    side *= sideDelta;
+    counter += 1;
+
+    // Updated state in react app
+    p.updateStateHandler({ nodes: currentFitness });
     // Stop loop when maximum iterations reached
-    //if (counter === m) {
-    p.noLoop();
-    //}
+    if (counter === m) {
+      p.noLoop();
+    }
   };
 };
 
