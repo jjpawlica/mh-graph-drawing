@@ -16,6 +16,16 @@ const sketch = p => {
   const width = 600;
   const height = 600;
 
+  // Original values do not produce pleasing results in this case
+  const w1 = 1; // Node distribution weight
+  const w2 = 1; // Edge length weight
+  const w3 = 1; // Desired edge length weight
+  const w4 = 1; // Angle between edges incident ot each point weight
+  const w5 = 1; // Angle resolution weight
+  const w6 = 1; // Number of crossings weight
+  const w7 = 1; // Symmetric weight 1
+  const w8 = 1; // Symmetric weight 2
+
   const m = 5000; // Iterations
 
   let counter = 0;
@@ -38,7 +48,17 @@ const sketch = p => {
     }
   };
 
-  p.calculateFitness = g => {};
+  p.calculateFitness = g => {
+    // Criteria values contributions to total fitness function
+    let m1 = 0;
+    let m2 = 0;
+    let m3 = 0;
+    let m4 = 0;
+    let m5 = 0;
+    let m6 = 0;
+    let m7 = 0;
+    let m8 = 0;
+  };
 
   p.generateAlternativeSolution = () => {};
 
@@ -80,7 +100,7 @@ const sketch = p => {
     counter += 1;
 
     // Updated state in react app
-    p.updateStateHandler({ nodes: currentEnergy - alternativeEnergy });
+    p.updateStateHandler({ nodes: 1 });
 
     // Stop loop when maximum iterations reached
     if (counter === m) {
