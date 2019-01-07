@@ -1,11 +1,18 @@
 /* eslint-disable guard-for-in */
 /* eslint-disable no-param-reassign */
+
+// Title: Spring Embeder
+// Author: Jakub Pawlica
+
 import data from './graphs/data';
 import Graph from './graphs/graph';
 
 const sketch = p => {
   const nodes = [];
   let graph;
+
+  const width = 600;
+  const height = 600;
 
   p.redrawHandler = sketchValues => {
     // ({ } = sketchValues);
@@ -26,23 +33,27 @@ const sketch = p => {
   };
 
   p.setup = () => {
-    p.createCanvas(600, 600);
+    p.createCanvas(width, height);
     p.background(51);
     p.frameRate(60);
 
+    // Fill nodes array and set random position for each node
     for (const index in data) {
       nodes[index] = {
         ...data[index],
-        x: p.random(0, 600),
-        y: p.random(0, 600)
+        x: p.random(width / 3, (2 * width) / 3),
+        y: p.random(height / 3, (2 * height) / 3)
       };
     }
 
+    // Generate new graph, it's edges and corresponding adjacency matrix
     graph = new Graph(nodes);
     graph.generateEdges();
+    graph.createAdjacencyMatrix();
   };
 
   p.draw = () => {
+    // Draw graph's nodes
     p.background(51);
     p.fill(255);
     p.noStroke();
@@ -50,10 +61,15 @@ const sketch = p => {
       p.ellipse(node.x, node.y, 16, 16);
       p.text(node.id, node.x, node.y - 20);
     }
+
+    // Draw graph's edges
     p.stroke(255);
     p.drawEdges();
 
+    // Updated state in react app
     p.updateStateHandler({ nodes: nodes.length });
+
+    // Stop draw loop
     p.noLoop();
   };
 };
