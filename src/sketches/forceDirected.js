@@ -99,8 +99,8 @@ const sketch = p => {
     for (const index in data) {
       nodes[index] = {
         ...data[index],
-        x: p.random(200, 400),
-        y: p.random(200, 400)
+        x: p.random(width / 3, (2 * width) / 3),
+        y: p.random(height / 3, (2 * height) / 3)
       };
     }
 
