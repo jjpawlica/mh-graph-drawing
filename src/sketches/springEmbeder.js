@@ -46,6 +46,7 @@ const sketch = p => {
     for (const node of g.nodes) {
       const totalForce = { x: 0, y: 0 };
       for (const target of g.nodes) {
+        // Check if two nodes are adjacent
         const connected = g.edges.some(
           edge =>
             (edge.source === node.id && edge.target === target.id) ||
@@ -58,13 +59,11 @@ const sketch = p => {
           // Calculated unit vector coordinates for given node and target node
           const x = (target.x - node.x) / distance;
           const y = (target.y - node.y) / distance;
-
           // Apply  Eades' formula for attraction force to unit vector if edges are connected
           if (connected) {
             totalForce.x += c1 * p.log(distance / c2) * x;
             totalForce.y += c1 * p.log(distance / c2) * y;
           }
-
           // Apply Eades' formula for repulsive force for inverse unit vector
           else {
             totalForce.x += (c3 / p.sqrt(distance)) * -x;
