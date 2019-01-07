@@ -52,7 +52,7 @@ const sketch = p => {
     p.setup();
   };
 
-  p.calculatedEnergy = g => {
+  p.calculateEnergy = g => {
     let totalEnergy = 0;
     let crossings = 0;
 
@@ -216,8 +216,8 @@ const sketch = p => {
     const alternative = p.generateAlternativeSolution(graph, radius);
 
     // Calculated fitness function for currnet best graph and alternative solution
-    const currentEnergy = p.calculatedEnergy(graph);
-    const alternativeEnergy = p.calculatedEnergy(alternative);
+    const currentEnergy = p.calculateEnergy(graph);
+    const alternativeEnergy = p.calculateEnergy(alternative);
 
     // Check if alternative layout should become current layout (Boltzmann distribution)
     if (p.random() < p.exp((currentEnergy - alternativeEnergy) / temperature)) {
