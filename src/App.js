@@ -6,7 +6,6 @@ import SpringEmbedder from './components/SpringEmbedder';
 import ForceDirected from './components/ForceDirected';
 import SimulatedAnnealing from './components/SimulatedAnnealing';
 import TabuSearch from './components/TabuSearch';
-import GeneticAlgorithm from './components/GeneticAlgorithm';
 
 class App extends Component {
   constructor() {
@@ -36,9 +35,6 @@ class App extends Component {
               <li>
                 <Link to="/tabu-search/">Tabu Search</Link>
               </li>
-              <li>
-                <Link to="/genetic-algorithm/">GeneticAlgorithm</Link>
-              </li>
             </ul>
           </nav>
 
@@ -47,7 +43,6 @@ class App extends Component {
           <Route path="/force-directed/" component={ForceDirected} />
           <Route path="/simulated-annealing/" component={SimulatedAnnealing} />
           <Route path="/tabu-search/" component={TabuSearch} />
-          <Route path="/genetic-algorithm/" component={GeneticAlgorithm} />
         </div>
       </Router>
     );

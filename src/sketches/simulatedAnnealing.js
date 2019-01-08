@@ -18,11 +18,11 @@ const sketch = p => {
   const height = 600;
 
   // Original values do not produce pleasing results in this case
-  const d1 = 10; // Node distribution weight
+  const d1 = 100; // Node distribution weight
   const d2 = 100; // // Borderlines  weight
   const d3 = 0.00001; // Edge length weight
   const minDistance = 100; //
-  const d5 = 10; // Node-edge distance weight
+  const d5 = 1; // Node-edge distance weight
   const d4 = d5 / (minDistance * minDistance); // Edge crossing weight
 
   const m = 2000; // Iterations
