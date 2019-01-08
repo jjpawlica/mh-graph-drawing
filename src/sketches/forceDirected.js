@@ -35,6 +35,8 @@ const sketch = p => {
     // ({ } = sketchValues);
   };
 
+  p.updateStateHandler = () => {};
+
   p.resetSketch = () => {
     p.clear();
     p.setup();

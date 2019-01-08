@@ -1,43 +1,55 @@
 import React, { Component } from 'react';
-import P5Wrapper from './components/P5Wrapper';
-// import sketch from './sketches/random';
-// import sketch from './sketches/springEmbedder';
-// import sketch from './sketches/forceDirected';
-// import sketch from './sketches/simulatedAnnealing';
-//import sketch from './sketches/tabuSearch';
-import sketch from './sketches/geneticAlgorithm';
+import { BrowserRouter as Router, Route, Link } from 'react-router-dom';
+
+import RandomGraph from './components/RandomGraph';
+import SpringEmbedder from './components/SpringEmbedder';
+import ForceDirected from './components/ForceDirected';
+import SimulatedAnnealing from './components/SimulatedAnnealing';
+import TabuSearch from './components/TabuSearch';
+import GeneticAlgorithm from './components/GeneticAlgorithm';
 
 class App extends Component {
   constructor() {
     super();
-    this.state = {
-      appName: 'Random Graph',
-      nodes: 0,
-      shouldSketchReset: false
-    };
+    this.state = {};
   }
 
-  updateStateHandler = (newState, callback) => this.setState(newState, callback);
-
-  resetSketch = () => {
-    const { shouldSketchReset } = this.state;
-    this.setState({ shouldSketchReset: !shouldSketchReset });
-  };
-
   render() {
-    const { appName, nodes } = this.state;
     return (
-      <div className="container">
-        <h1>{appName}</h1>
-        <h2>{`Nodes: ${nodes}`}</h2>
+      <Router>
         <div>
-          <P5Wrapper
-            sketch={sketch}
-            sketchValues={{}}
-            updateStateHandler={this.updateStateHandler}
-          />
+          <h1>MAIN</h1>
+          <nav>
+            <ul>
+              <li>
+                <Link to="/">Random</Link>
+              </li>
+              <li>
+                <Link to="/spring-embedder/">Spring Embedder</Link>
+              </li>
+              <li>
+                <Link to="/force-directed/">Force Directed</Link>
+              </li>
+              <li>
+                <Link to="/simulated-annealing/">Simulated Annealing</Link>
+              </li>
+              <li>
+                <Link to="/tabu-search/">Tabu Search</Link>
+              </li>
+              <li>
+                <Link to="/genetic-algorithm/">GeneticAlgorithm</Link>
+              </li>
+            </ul>
+          </nav>
+
+          <Route path="/" exact component={RandomGraph} />
+          <Route path="/spring-embedder/" component={SpringEmbedder} />
+          <Route path="/force-directed/" component={ForceDirected} />
+          <Route path="/simulated-annealing/" component={SimulatedAnnealing} />
+          <Route path="/tabu-search/" component={TabuSearch} />
+          <Route path="/genetic-algorithm/" component={GeneticAlgorithm} />
         </div>
-      </div>
+      </Router>
     );
   }
 }

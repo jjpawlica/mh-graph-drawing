@@ -17,11 +17,11 @@ const sketch = p => {
   const populationFitness = [];
 
   const populationSize = 30;
-  const generationsNumber = 1000;
+  // const generationsNumber = 1000;
 
   const crossoverProbability = 0.75;
-  const mutationProbability = 0.25;
-  const inversionProbability = 0.2;
+  // const mutationProbability = 0.25;
+  // const inversionProbability = 0.2;
 
   const width = 600;
   const height = 600;
@@ -36,11 +36,13 @@ const sketch = p => {
   const w7 = 1; // Symmetric weight 1
   const w8 = 1; // Symmetric weight 2
 
-  let counter = 0;
+  // let counter = 0;
 
   p.redrawHandler = sketchValues => {
     // ({ } = sketchValues);
   };
+
+  p.updateStateHandler = () => {};
 
   p.resetSketch = () => {
     p.clear();
@@ -292,8 +294,8 @@ const sketch = p => {
     // Add best graph to next population
 
     // Updated iteration counter
-    counter += 1;
-    //console.log(nextPopulationPairs);
+    // counter += 1;
+    // console.log(nextPopulationPairs);
 
     // Updated state in react app
     // p.updateStateHandler({ nodes: bestMemberIndex });
