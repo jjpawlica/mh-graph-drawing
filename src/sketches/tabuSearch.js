@@ -202,119 +202,112 @@ const sketch = p => {
     p.stroke(255);
     p.drawEdges(graph);
 
-    // Generate neighborhood
-    const neighborhood = [];
+    if (counter < m) {
+      // Generate neighborhood
+      const neighborhood = [];
 
-    for (const node of graph.nodes) {
-      const neighbors = [];
-      if (node.x - side / 2 > 0 && node.y - side / 2 > 0) {
-        neighbors.push([node.x - side / 2, node.y - side / 2]);
+      for (const node of graph.nodes) {
+        const neighbors = [];
+        if (node.x - side / 2 > 0 && node.y - side / 2 > 0) {
+          neighbors.push([node.x - side / 2, node.y - side / 2]);
+        }
+        if (node.x - side / 2 > 0) {
+          neighbors.push([node.x - side / 2, node.y]);
+        }
+        if (node.x - side / 2 > 0 && node.y + side / 2 < height) {
+          neighbors.push([node.x - side / 2, node.y + side / 2]);
+        }
+        if (node.x + side / 2 < width && node.y - side / 2 > 0) {
+          neighbors.push([node.x + side / 2, node.y - side / 2]);
+        }
+        if (node.x + side / 2 < width) {
+          neighbors.push([node.x + side / 2, node.y]);
+        }
+        if (node.x + side / 2 < width && node.y + side / 2 < height) {
+          neighbors.push([node.x + side / 2, node.y + side / 2]);
+        }
+        if (node.y - side / 2 > 0) {
+          neighbors.push([node.x, node.y - side / 2]);
+        }
+        if (node.y + side / 2 < height) {
+          neighbors.push([node.x, node.y + side / 2]);
+        }
+        neighborhood.push(neighbors);
       }
-      if (node.x - side / 2 > 0) {
-        neighbors.push([node.x - side / 2, node.y]);
-      }
-      if (node.x - side / 2 > 0 && node.y + side / 2 < height) {
-        neighbors.push([node.x - side / 2, node.y + side / 2]);
-      }
-      if (node.x + side / 2 < width && node.y - side / 2 > 0) {
-        neighbors.push([node.x + side / 2, node.y - side / 2]);
-      }
-      if (node.x + side / 2 < width) {
-        neighbors.push([node.x + side / 2, node.y]);
-      }
-      if (node.x + side / 2 < width && node.y + side / 2 < height) {
-        neighbors.push([node.x + side / 2, node.y + side / 2]);
-      }
-      if (node.y - side / 2 > 0) {
-        neighbors.push([node.x, node.y - side / 2]);
-      }
-      if (node.y + side / 2 < height) {
-        neighbors.push([node.x, node.y + side / 2]);
-      }
-      neighborhood.push(neighbors);
-    }
 
-    for (const set of neighborhood) {
-      for (const point of set) {
-        p.fill(0, 255, 0);
-        p.ellipse(point[0], point[1], 4, 4);
+      for (const set of neighborhood) {
+        for (const point of set) {
+          p.fill(0, 255, 0);
+          p.ellipse(point[0], point[1], 4, 4);
+        }
       }
-    }
 
-    // Decrease tabu duration for each element in tabu list
-    if (tabu.length > 0) {
-      const tabuClone = JSON.parse(JSON.stringify(tabu));
-      for (let i = 0; i < tabuClone.length; i += 1) {
-        tabuClone[i][2] -= 1;
+      // Decrease tabu duration for each element in tabu list
+      if (tabu.length > 0) {
+        const tabuClone = JSON.parse(JSON.stringify(tabu));
+        for (let i = 0; i < tabuClone.length; i += 1) {
+          tabuClone[i][2] -= 1;
+        }
+        tabu = tabuClone;
       }
-      tabu = tabuClone;
-    }
 
-    // // Remove points from tabu if their duration = 0
-    tabu = tabu.filter(point => point[2] > 0);
+      // // Remove points from tabu if their duration = 0
+      tabu = tabu.filter(point => point[2] > 0);
 
-    const currentFitness = p.calculateFitness(graph);
-    let bestFitness = currentFitness;
+      const currentFitness = p.calculateFitness(graph);
+      let bestFitness = currentFitness;
 
-    let chosenNode = 0;
-    let chosenPoint = 0;
+      let chosenNode = 0;
+      let chosenPoint = 0;
 
-    // Check fitness function in every possible alterative solution
-    for (let i = 0; i < neighborhood.length; i += 1) {
-      for (let j = 0; j < neighborhood[i].length; j += 1) {
-        // Check if neighbor is not in tabu list
-        const isTabu = p.isTabu(neighborhood[i][j][0], neighborhood[i][j][1]);
-        if (!isTabu) {
-          // Calculated fitness function for current best graph and alternative solution
-          const alternative = p.generateAlternativeSolution(graph, neighborhood, i, j);
-          const alternativeFitness = p.calculateFitness(alternative);
-          if (alternativeFitness < bestFitness) {
-            bestFitness = alternativeFitness;
-            chosenNode = i;
-            chosenPoint = j;
-          }
-          // Add bad solutions to tabu list
-          if (currentFitness / alternativeFitness > tabuCutoff) {
-            tabu.push([neighborhood[i][j][0], neighborhood[i][j][1], tabuDuration]);
+      // Check fitness function in every possible alterative solution
+      for (let i = 0; i < neighborhood.length; i += 1) {
+        for (let j = 0; j < neighborhood[i].length; j += 1) {
+          // Check if neighbor is not in tabu list
+          const isTabu = p.isTabu(neighborhood[i][j][0], neighborhood[i][j][1]);
+          if (!isTabu) {
+            // Calculated fitness function for current best graph and alternative solution
+            const alternative = p.generateAlternativeSolution(graph, neighborhood, i, j);
+            const alternativeFitness = p.calculateFitness(alternative);
+            if (alternativeFitness < bestFitness) {
+              bestFitness = alternativeFitness;
+              chosenNode = i;
+              chosenPoint = j;
+            }
+            // Add bad solutions to tabu list
+            if (currentFitness / alternativeFitness > tabuCutoff) {
+              tabu.push([neighborhood[i][j][0], neighborhood[i][j][1], tabuDuration]);
+            }
           }
         }
       }
+
+      const bestAlternative = p.generateAlternativeSolution(
+        graph,
+        neighborhood,
+        chosenNode,
+        chosenPoint
+      );
+
+      tabu.push([
+        neighborhood[chosenNode][chosenPoint][0],
+        neighborhood[chosenNode][chosenPoint][1],
+        tabuDuration
+      ]);
+
+      graph = bestAlternative;
+      side *= sideDelta;
     }
 
-    const bestAlternative = p.generateAlternativeSolution(
-      graph,
-      neighborhood,
-      chosenNode,
-      chosenPoint
-    );
-
-    tabu.push([
-      neighborhood[chosenNode][chosenPoint][0],
-      neighborhood[chosenNode][chosenPoint][1],
-      tabuDuration
-    ]);
-
-    // for (const node of bestAlternative.nodes) {
-    //   p.fill(0, 255, 0, 100);
-    //   p.noStroke();
-    //   p.ellipse(node.x, node.y, 16, 16);
-    //   p.text(node.id, node.x, node.y - 20);
-    // }
-
-    // // Draw graph's edges
-    // p.stroke(0, 255, 0);
-    // p.drawEdges(bestAlternative);
-
-    graph = bestAlternative;
-
-    side *= sideDelta;
     counter += 1;
 
     // Updated state in react app
-    p.updateStateHandler({ nodes: currentFitness });
-    // Stop loop when maximum iterations reached
-    if (counter === m) {
-      p.noLoop();
+    p.updateStateHandler({ nodes: graph.nodes.length });
+
+    if (p.mouseIsPressed) {
+      p.resetSketch();
+      counter = 0;
+      side = maxSide;
     }
   };
 };

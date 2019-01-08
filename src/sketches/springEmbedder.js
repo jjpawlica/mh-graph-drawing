@@ -122,9 +122,9 @@ const sketch = p => {
     // Updated state in react app
     p.updateStateHandler({ nodes: nodes.length });
 
-    // Stop loop when maximum iterations reached
-    if (counter === m) {
-      p.noLoop();
+    if (p.mouseIsPressed) {
+      p.resetSketch();
+      counter = 0;
     }
   };
 };

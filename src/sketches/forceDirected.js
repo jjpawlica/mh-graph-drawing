@@ -125,8 +125,9 @@ const sketch = p => {
     p.drawEdges();
 
     // On each draw loop update graph
-    p.arrangeGraph(graph, temperature);
-
+    if (counter < m) {
+      p.arrangeGraph(graph, temperature);
+    }
     // Updated iteration counter and temperature
     temperature *= b;
     counter += 1;
@@ -134,9 +135,10 @@ const sketch = p => {
     // Updated state in react app
     p.updateStateHandler({ nodes: nodes.length });
 
-    // Stop loop when maximum iterations reached
-    if (counter === m) {
-      p.noLoop();
+    if (p.mouseIsPressed) {
+      p.resetSketch();
+      counter = 0;
+      temperature = startTemperature;
     }
   };
 };

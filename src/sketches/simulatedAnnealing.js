@@ -220,31 +220,35 @@ const sketch = p => {
       p.ellipse(node.x, node.y, radius, radius);
     }
 
-    // Generate alternative graph layout
-    const alternative = p.generateAlternativeSolution(graph, radius);
+    if (counter < m) {
+      // Generate alternative graph layout
+      const alternative = p.generateAlternativeSolution(graph, radius);
 
-    // Calculated fitness function for currnet best graph and alternative solution
-    const currentEnergy = p.calculateEnergy(graph);
-    const alternativeEnergy = p.calculateEnergy(alternative);
+      // Calculated fitness function for currnet best graph and alternative solution
+      const currentEnergy = p.calculateEnergy(graph);
+      const alternativeEnergy = p.calculateEnergy(alternative);
 
-    // Check if alternative layout should become current layout (Boltzmann distribution)
-    if (p.random() < p.exp((currentEnergy - alternativeEnergy) / temperature)) {
-      // Switch current layout to alternative layout
-      graph = alternative;
-      // Updated temperature and radius of the neighborhood
-      temperature *= coolingFactor;
-      radius *= radiusDelta;
+      // Check if alternative layout should become current layout (Boltzmann distribution)
+      if (p.random() < p.exp((currentEnergy - alternativeEnergy) / temperature)) {
+        // Switch current layout to alternative layout
+        graph = alternative;
+        // Updated temperature and radius of the neighborhood
+        temperature *= coolingFactor;
+        radius *= radiusDelta;
+      }
     }
-
     // Updated iteration counter
     counter += 1;
 
     // Updated state in react app
-    p.updateStateHandler({ nodes: currentEnergy - alternativeEnergy });
+    p.updateStateHandler({ nodes: graph.nodes.length });
 
     // Stop loop when maximum iterations reached
-    if (counter === m) {
-      p.noLoop();
+    if (p.mouseIsPressed) {
+      p.resetSketch();
+      counter = 0;
+      radius = maxRadius;
+      temperature = startTemperature;
     }
   };
 };

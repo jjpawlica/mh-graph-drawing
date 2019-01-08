@@ -71,8 +71,9 @@ const sketch = p => {
     // Updated state in react app
     p.updateStateHandler({ nodes: nodes.length });
 
-    // Stop draw loop
-    p.noLoop();
+    if (p.mouseIsPressed) {
+      p.resetSketch();
+    }
   };
 };
 
