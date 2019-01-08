@@ -25,9 +25,9 @@ const sketch = p => {
   const d5 = 10; // Node-edge distance weight
   const d4 = d5 / (minDistance * minDistance); // Edge crossing weight
 
-  const m = 5000; // Iterations
+  const m = 2000; // Iterations
 
-  const maxRadius = 50;
+  const maxRadius = 25;
   const minRadius = 1;
 
   let radius = maxRadius;
@@ -213,6 +213,12 @@ const sketch = p => {
     // Draw graph's edges
     p.stroke(255);
     p.drawEdges(graph);
+
+    for (const node of graph.nodes) {
+      p.noFill();
+      p.stroke(255, 0, 0);
+      p.ellipse(node.x, node.y, radius, radius);
+    }
 
     // Generate alternative graph layout
     const alternative = p.generateAlternativeSolution(graph, radius);
