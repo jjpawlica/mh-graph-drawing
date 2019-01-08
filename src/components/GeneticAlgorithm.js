@@ -2,12 +2,11 @@ import React, { Component } from 'react';
 import P5Wrapper from './P5Wrapper';
 import sketch from '../sketches/geneticAlgorithm';
 
-class ForceDirected extends Component {
+class GeneticAlgorithm extends Component {
   constructor() {
     super();
     this.state = {
       appName: 'Genetic Algorithm',
-      nodes: 0,
       shouldSketchReset: false
     };
   }
@@ -20,11 +19,10 @@ class ForceDirected extends Component {
   };
 
   render() {
-    const { appName, nodes } = this.state;
+    const { appName } = this.state;
     return (
       <div className="container">
         <h1>{appName}</h1>
-        <h2>{`Nodes: ${nodes}`}</h2>
         <div>
           <P5Wrapper
             sketch={sketch}
@@ -37,4 +35,4 @@ class ForceDirected extends Component {
   }
 }
 
-export default ForceDirected;
+export default GeneticAlgorithm;

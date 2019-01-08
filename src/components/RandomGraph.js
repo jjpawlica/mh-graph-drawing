@@ -7,7 +7,6 @@ class ForceDirected extends Component {
     super();
     this.state = {
       appName: 'Random Graph',
-      nodes: 0,
       shouldSketchReset: false
     };
   }
@@ -20,11 +19,10 @@ class ForceDirected extends Component {
   };
 
   render() {
-    const { appName, nodes } = this.state;
+    const { appName } = this.state;
     return (
       <div className="container">
         <h1>{appName}</h1>
-        <h2>{`Nodes: ${nodes}`}</h2>
         <div>
           <P5Wrapper
             sketch={sketch}

@@ -6,7 +6,7 @@
 // Author: Jakub Pawlica
 // Based on: Zhang, Q.; Liu, H.; Zhang, W. & Guo, Y. (2005), Drawing Undirected Graphs with Genetic Algorithms., in Lipo Wang; Ke Chen & Yew-Soon Ong, ed., 'ICNC (3)' , Springer, , pp. 28-36 .
 
-import data from './graphs/data';
+import data from '../data/data2';
 import Graph from './graphs/graph';
 
 const sketch = p => {
@@ -39,7 +39,7 @@ const sketch = p => {
   // let counter = 0;
 
   p.redrawHandler = sketchValues => {
-    // ({ } = sketchValues);
+    // ({ data } = sketchValues);
   };
 
   p.updateStateHandler = () => {};

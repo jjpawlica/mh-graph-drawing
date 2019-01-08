@@ -18,7 +18,7 @@ class App extends Component {
     return (
       <Router>
         <div>
-          <h1>MAIN</h1>
+          <h1>Navigation</h1>
           <nav>
             <ul>
               <li>

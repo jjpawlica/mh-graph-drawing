@@ -1,10 +1,10 @@
 /* eslint-disable guard-for-in */
 /* eslint-disable no-param-reassign */
 
-// Title: Spring Embeder
+// Title: Random Graph
 // Author: Jakub Pawlica
 
-import data from './graphs/data';
+import data from '../data/data2';
 import Graph from './graphs/graph';
 
 const sketch = p => {
@@ -15,7 +15,7 @@ const sketch = p => {
   const height = 600;
 
   p.redrawHandler = sketchValues => {
-    // ({ } = sketchValues);
+    // ({ data } = sketchValues);
   };
 
   p.updateStateHandler = () => {};

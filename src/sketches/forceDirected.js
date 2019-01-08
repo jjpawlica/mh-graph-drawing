@@ -5,8 +5,7 @@
 // Author: Jakub Pawlica
 // Based on: Fruchterman, T. M. J. & Reingold, E. M. (1991), 'Graph Drawing by Force-directed Placement', Software - Practice and Experience 21 (11), 1129-1164.
 // TODO: Add Inertia and Gravitation
-
-import data from './graphs/data2';
+import data from '../data/data2';
 import Graph from './graphs/graph';
 
 const sketch = p => {
@@ -32,7 +31,7 @@ const sketch = p => {
   let counter = 0;
 
   p.redrawHandler = sketchValues => {
-    // ({ } = sketchValues);
+    // ({ data } = sketchValues);
   };
 
   p.updateStateHandler = () => {};
@@ -96,7 +95,6 @@ const sketch = p => {
     p.createCanvas(600, 600);
     p.background(51);
     p.frameRate(60);
-
     // Fill nodes array and set random position for each node
     for (const index in data) {
       nodes[index] = {

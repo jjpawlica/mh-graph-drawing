@@ -6,14 +6,12 @@
 // Author: Jakub Pawlica
 // Based on: Dib, F. K. & Rodgers, P. (2014), A Tabu Search Based Approach for Graph Layout., in Erland Jungert, ed., 'DMS' , Knowledge Systems Institute Graduate School, , pp. 283-291.
 
-import data from './graphs/data3';
+import data from '../data/data3';
 import Graph from './graphs/graph';
 
 const sketch = p => {
   const nodes = [];
-
   let tabu = [];
-
   let graph;
 
   const width = 600;
@@ -40,7 +38,7 @@ const sketch = p => {
   let counter = 0;
 
   p.redrawHandler = sketchValues => {
-    // ({ } = sketchValues);
+    // ({ data } = sketchValues);
   };
 
   p.updateStateHandler = () => {};
