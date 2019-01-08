@@ -14,7 +14,7 @@
 importScripts("https://storage.googleapis.com/workbox-cdn/releases/3.6.3/workbox-sw.js");
 
 importScripts(
-  "/mh-graph-drawing/precache-manifest.2f4e2a4a1ea8a4dad77b6f43f4ce5751.js"
+  "/mh-graph-drawing/precache-manifest.992765fe4f4fa596a032df442c8c02fa.js"
 );
 
 workbox.clientsClaim();
