@@ -262,7 +262,7 @@ const sketch = p => {
     // Perform elitist fitness proportionate selection (should add n-1 member because best member will be added at the end)
     const populationFitnessSum = populationNormalizedFitness.reduce((a, b) => a + b, 0);
     const weights = populationNormalizedFitness.map(n => n / populationFitnessSum);
-    for (let i = 0; i < population.length - 1; i += 1) {
+    for (let i = 0; i < population.length - 2; i += 1) {
       const randomValue = p.random();
       let totalProbability = 0;
       for (let j = 0; j < weights.length; j += 1) {
@@ -274,9 +274,26 @@ const sketch = p => {
       }
     }
 
+    // Apply crossover operator
+    for (let i = 0; i < nextPopulation.length; i += 1) {
+      if (i % 2 === 0) {
+        const randomValue = p.random();
+        if (randomValue > crossoverProbability) {
+          console.log(i, i + 1, randomValue > crossoverProbability);
+        }
+      }
+    }
+    // Apply non-uniform mutation
+
+    // Apply single-vertex-neighborhood mutation
+
+    // Apply inversion operator
+
+    // Add best graph to next population
+
     // Updated iteration counter
     counter += 1;
-    console.log(nextPopulation.length);
+    //console.log(nextPopulationPairs);
 
     // Updated state in react app
     // p.updateStateHandler({ nodes: bestMemberIndex });
