@@ -5,7 +5,7 @@
 // Author: Jakub Pawlica
 // Based on: Eades, P. (1984), 'A heuristic for graph drawing', Congressus Numerantium 42 , 149-160.
 
-import data from '../data/data2';
+import data from '../data/data3';
 import Graph from './graphs/graph';
 
 const sketch = p => {

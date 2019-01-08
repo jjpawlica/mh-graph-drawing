@@ -7,7 +7,7 @@
 // Based on: Davidson, R. & Harel, D. (1996), 'Drawing Graphs Nicely Using Simulated Annealing.', ACM Trans. Graph. 15 (4), 301-331.
 // TODO: Review calculations, better neighborhood function
 
-import data from '../data/data2';
+import data from '../data/data3';
 import Graph from './graphs/graph';
 
 const sketch = p => {

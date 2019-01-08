@@ -5,7 +5,7 @@
 // Author: Jakub Pawlica
 // Based on: Fruchterman, T. M. J. & Reingold, E. M. (1991), 'Graph Drawing by Force-directed Placement', Software - Practice and Experience 21 (11), 1129-1164.
 // TODO: Add Inertia and Gravitation
-import data from '../data/data2';
+import data from '../data/data3';
 import Graph from './graphs/graph';
 
 const sketch = p => {
