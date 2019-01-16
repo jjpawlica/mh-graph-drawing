@@ -36,9 +36,6 @@ class App extends Component {
               <li>
                 <Link to="/tabu-search/">Tabu Search</Link>
               </li>
-              <li>
-                <Link to="/genetic-algorithm/">GeneticAlgorithm</Link>
-              </li>
             </ul>
           </nav>
 
